@@ -599,9 +599,6 @@
                 const configType = configTypeInput.value;
                 
                 if (defaultFile) {
-                    // Only auto-update if the user hasn't started typing or if the field is empty
-                    // Since we allow modification, we only auto-fill on type change or if it was cleared/initial load
-                    // For the 'input' event on defaultFile, we always auto-update as it's the trigger.
                     customFileInput.value = generateCustomFileName(defaultFile, configType);
                 } else {
                     customFileInput.value = '';
@@ -615,14 +612,16 @@
                         defaultPath: 'ruleset/rules',
                         customPath: 'etc/rules',
                         excludeTag: 'rule_exclude',
-                        placeholder: '0505-paloalto_rules.xml'
+                        placeholder: '0505-paloalto_rules.xml',
+                        defaultValue: '0505-paloalto_rules.xml'
                     };
                 } else if (type === 'decoders') {
                     return {
                         defaultPath: 'ruleset/decoders',
                         customPath: 'etc/decoders',
                         excludeTag: 'decoder_exclude',
-                        placeholder: '0030-firewall_decoders.xml'
+                        placeholder: '0505-paloalto_decoders.xml', // Updated placeholder for clarity
+                        defaultValue: '0505-paloalto_decoders.xml' // Specific decoder example
                     };
                 }
             }
@@ -631,6 +630,9 @@
             configTypeInput.addEventListener('change', function() {
                 const type = this.value;
                 const paths = getConfigPaths(type);
+                
+                // FIX IMPLEMENTED: Update the default file input value based on the configuration type
+                defaultFileInput.value = paths.defaultValue;
                 defaultFileInput.placeholder = paths.placeholder;
                 
                 // Regenerate custom file name when type changes
@@ -640,6 +642,7 @@
             });
             
             defaultFileInput.addEventListener('input', function() {
+                // Ensure we only regenerate the custom name if the default file name changes
                 updateCustomFileName();
             });
 
